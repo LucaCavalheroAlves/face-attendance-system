@@ -8,7 +8,7 @@ from PIL import Image, ImageTk
 import face_recognition
 
 import util
-from test import test
+
 
 
 class App:
@@ -19,8 +19,7 @@ class App:
         self.login_button_main_window = util.get_button(self.main_window, 'login', 'green', self.login)
         self.login_button_main_window.place(x=750, y=200)
 
-        self.logout_button_main_window = util.get_button(self.main_window, 'logout', 'red', self.logout)
-        self.logout_button_main_window.place(x=750, y=300)
+        
 
         self.register_new_user_button_main_window = util.get_button(self.main_window, 'register new user', 'gray',
                                                                     self.register_new_user, fg='black')
@@ -39,7 +38,7 @@ class App:
 
     def add_webcam(self, label):
         if 'cap' not in self.__dict__:
-            self.cap = cv2.VideoCapture(2)
+            self.cap = cv2.VideoCapture(0)
 
         self._label = label
         self.process_webcam()
@@ -58,13 +57,7 @@ class App:
 
     def login(self):
 
-        label = test(
-                image=self.most_recent_capture_arr,
-                model_dir='/home/phillip/Desktop/todays_tutorial/27_face_recognition_spoofing/code/face-attendance-system/Silent-Face-Anti-Spoofing/resources/anti_spoof_models',
-                device_id=0
-                )
-
-        if label == 1:
+       
 
             name = util.recognize(self.most_recent_capture_arr, self.db_dir)
 
@@ -76,31 +69,9 @@ class App:
                     f.write('{},{},in\n'.format(name, datetime.datetime.now()))
                     f.close()
 
-        else:
-            util.msg_box('Hey, you are a spoofer!', 'You are fake !')
+       
 
-    def logout(self):
-
-        label = test(
-                image=self.most_recent_capture_arr,
-                model_dir='/home/phillip/Desktop/todays_tutorial/27_face_recognition_spoofing/code/face-attendance-system/Silent-Face-Anti-Spoofing/resources/anti_spoof_models',
-                device_id=0
-                )
-
-        if label == 1:
-
-            name = util.recognize(self.most_recent_capture_arr, self.db_dir)
-
-            if name in ['unknown_person', 'no_persons_found']:
-                util.msg_box('Ups...', 'Unknown user. Please register new user or try again.')
-            else:
-                util.msg_box('Hasta la vista !', 'Goodbye, {}.'.format(name))
-                with open(self.log_path, 'a') as f:
-                    f.write('{},{},out\n'.format(name, datetime.datetime.now()))
-                    f.close()
-
-        else:
-            util.msg_box('Hey, you are a spoofer!', 'You are fake !')
+    
 
 
     def register_new_user(self):
