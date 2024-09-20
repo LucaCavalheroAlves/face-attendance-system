@@ -109,16 +109,37 @@ class App:
         self.main_window.mainloop()
 
     def accept_register_new_user(self):
-        name = self.entry_text_register_new_user.get(1.0, "end-1c")
+        # Captura a codificação facial
+        new_user_encodings = face_recognition.face_encodings(self.register_new_user_capture)
 
-        embeddings = face_recognition.face_encodings(self.register_new_user_capture)[0]
+        if not new_user_encodings:
+            util.msg_box('Erro!', 'Não foi possível detectar um rosto. Tente novamente.')
+            return
 
-        file = open(os.path.join(self.db_dir, '{}.pickle'.format(name)), 'wb')
-        pickle.dump(embeddings, file)
+        new_user_encoding = new_user_encodings[0]
 
-        util.msg_box('Success!', 'User was registered successfully !')
+        # Carregar todas as codificações existentes
+        existing_encodings = []
+        for filename in os.listdir(self.db_dir):
+            if filename.endswith('.pickle'):
+                with open(os.path.join(self.db_dir, filename), 'rb') as file:
+                    existing_encodings.append(pickle.load(file))
 
+        # Verificar se a nova codificação já existe
+        matches = face_recognition.compare_faces(existing_encodings, new_user_encoding)
+
+        if any(matches):
+            util.msg_box('Erro!', 'Usuário já cadastrado. Tente registrar um rosto diferente.')
+            return
+
+        # Salva a nova codificação facial
+        name = self.entry_text_register_new_user.get(1.0, "end-1c").strip()
+        with open(os.path.join(self.db_dir, f'{name}.pickle'), 'wb') as file:
+            pickle.dump(new_user_encoding, file)
+
+        util.msg_box('Sucesso!', 'Usuário registrado com sucesso!')
         self.register_new_user_window.destroy()
+
 
 
 if __name__ == "__main__":
