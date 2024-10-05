@@ -26,11 +26,13 @@ DROP TABLE IF EXISTS `users`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nome` varchar(100) NOT NULL,
+  `user_name` varchar(100) DEFAULT NULL,
   `create_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `update_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `email` varchar(100) DEFAULT NULL,
+  `password` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -55,4 +57,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-23 15:24:36
+-- Dump completed on 2024-10-05 15:42:35
