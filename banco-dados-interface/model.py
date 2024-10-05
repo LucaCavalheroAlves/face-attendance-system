@@ -31,11 +31,3 @@ class userDAO:
         return myresult
 
 mydb, mycursor = criar_conexão_com_MYSQL() # Por favor, adapte para seu MYSQL
-
-x = userDAO()
-result = x.get_user_info_based_on_email("tessdgsdte@gmail.com")
-
-if result:
-    print('tem email')
-else:
-    print('não tem email')
