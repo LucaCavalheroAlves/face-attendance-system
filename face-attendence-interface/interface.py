@@ -8,6 +8,7 @@ from PIL import Image, ImageTk
 import util
 import face_recognition
 import model
+import numpy as np
 
 class Application:
     def __init__(self):
@@ -180,6 +181,7 @@ class Application:
             util.msg_box('Sucesso!', 'Login realizado com sucesso!')
 
     def validate_register(self):
+        global new_user,email,user,user_password
         new_user = model.userDAO()
         email = str(self.email_entry.get())
         user = str(self.user_entry.get())
@@ -205,7 +207,7 @@ class Application:
         elif new_user.get_user_info_based_on_email(email):
             messagebox.showerror("Erro", "Email já cadastrado!")
         else:
-            messagebox.showinfo("Sucesso", "Usuario cadastrado com sucesso")
+            
             
             user_password = new_user.generate_password(password)
             user_image_name = new_user.save_bd_new_user_and_return_id_of_user(user, email, user_password)
@@ -237,20 +239,23 @@ class Application:
         self.add_img_to_label(self.capture_label)
 
         # Botões para aceitar e cancelar
-        self.accept_button = ctk.CTkButton(master=self.capture_frame, text="Aceitar", command=self.register_new_user_face)
+        self.accept_button = ctk.CTkButton(master=self.capture_window, text="Aceitar", command=self.register_new_user_face)
         self.accept_button.pack(pady=(10, 5))  # Use pack aqui
 
-        self.cancel_button = ctk.CTkButton(master=self.capture_frame, text="Cancelar", command=self.cancel_capture)
+        self.cancel_button = ctk.CTkButton(master=self.capture_window, text="Cancelar", command=self.cancel_capture)
         self.cancel_button.pack(pady=(5, 10))  # Use pack aqui
 
-        # Iniciar a captura da webcam
-        self.add_webcam(self.capture_label)
+        
 
     def register_new_user_face(self):
-        new_user_encodings = face_recognition.face_encodings(self.register_new_user_capture)
+        # Converte a imagem PIL mais recente em numpy.ndarray
+        face_image = np.array(self.most_recent_capture_pil)
+        
+        # Obtém as codificações faciais
+        new_user_encodings = face_recognition.face_encodings(face_image)
 
         if not new_user_encodings:
-            util.msg_box('Erro!', 'Não foi possível detectar um rosto. Tente novamente.')
+            messagebox.showinfo('Erro!', 'Não foi possível detectar um rosto. Tente novamente.')
             return
 
         new_user_encoding = new_user_encodings[0]
@@ -266,22 +271,23 @@ class Application:
         matches = face_recognition.compare_faces(existing_encodings, new_user_encoding)
 
         if any(matches):
-            util.msg_box('Erro!', 'Usuário já cadastrado. Tente registrar um rosto diferente.')
+            messagebox.showinfo('Erro!', 'Usuário já cadastrado. Tente registrar um rosto diferente.')
             return
 
         # Salva a nova codificação facial
-        name = self.user_entry.get().strip()  # Obter nome do usuário a partir do campo
-        with open(os.path.join(self.db_dir, f'{name}.pickle'), 'wb') as file:
+        user_image_name = new_user.save_bd_new_user_and_return_id_of_user(user, email, user_password)  # Obter nome do usuário a partir do campo
+        with open(os.path.join(self.db_dir, f'{user_image_name}.pickle'), 'wb') as file:
             pickle.dump(new_user_encoding, file)
 
-        util.msg_box('Sucesso!', 'Usuário registrado com sucesso!')
+        messagebox.showinfo("Sucesso", "Usuario cadastrado com sucesso")
         self.capture_window.destroy()  # Fechar a janela de captura
+
 
     def cancel_capture(self):
         # Limpar a captura e liberar a câmera
         if 'cap' in self.__dict__:
             self.cap.release()
-            del self.cap
+            
         
         # Destruir a janela de captura
         if hasattr(self, 'capture_window'):
