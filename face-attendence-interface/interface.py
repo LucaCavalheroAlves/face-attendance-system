@@ -213,17 +213,16 @@ class Application:
         self.add_img_to_label(self.capture_label)
 
         # Botões para aceitar e cancelar
-        self.accept_button = ctk.CTkButton(master=self.capture_frame, text="Aceitar", command=self.register_new_user_face)
+        self.accept_button = ctk.CTkButton(master=self.capture_window, text="Aceitar", command=self.register_new_user_face)
         self.accept_button.pack(pady=(10, 5))  # Use pack aqui
 
-        self.cancel_button = ctk.CTkButton(master=self.capture_frame, text="Cancelar", command=self.cancel_capture)
+        self.cancel_button = ctk.CTkButton(master=self.capture_window, text="Cancelar", command=self.cancel_capture)
         self.cancel_button.pack(pady=(5, 10))  # Use pack aqui
 
-        # Iniciar a captura da webcam
-        self.add_webcam(self.capture_label)
+        
 
     def register_new_user_face(self):
-        new_user_encodings = face_recognition.face_encodings(self.register_new_user_capture)
+        new_user_encodings = face_recognition.face_encodings(self.register_new_user_face)
 
         if not new_user_encodings:
             util.msg_box('Erro!', 'Não foi possível detectar um rosto. Tente novamente.')
