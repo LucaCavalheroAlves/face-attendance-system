@@ -76,7 +76,7 @@ class Application:
 
         # Frame (caixa onde o login vai estar localizado)
         login_container = ctk.CTkFrame(master=self.login_frame, width=350, height=394)
-        login_container.pack(pady=10)  # Use pack aqui
+        login_container.pack(pady=100)# Use pack aqui
 
         # Frame widgets
         label = ctk.CTkLabel(master=login_container, text="Sistema de Login", font=("Arial", 20))
@@ -121,7 +121,7 @@ class Application:
 
         # Criando a tela de registro
         self.register_frame = ctk.CTkFrame(master=self.login_frame, width=350, height=394)
-        self.register_frame.pack(pady=10)  # Use pack aqui
+        self.register_frame.pack(pady=160)  # Use pack aqui
 
         label = ctk.CTkLabel(master=self.register_frame, text="Cadastre-se", font=("Arial", 20))
         label.pack(pady=(15, 10))  # Use pack aqui
