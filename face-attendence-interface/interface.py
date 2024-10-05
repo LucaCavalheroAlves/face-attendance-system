@@ -6,7 +6,8 @@ import customtkinter as ctk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 import util
-import face_recognition
+#import face_recognition
+import model
 
 class Application:
     def __init__(self):
@@ -170,25 +171,39 @@ class Application:
         util.msg_box('Sucesso!', 'Login realizado com sucesso!')
 
     def validate_register(self):
-        email = self.email_entry.get()
-        username = self.user_entry.get()
-        password = self.password_entry.get()
+        new_user = model.userDAO()
+        email = str(self.email_entry.get())
+        user = str(self.user_entry.get())
+        password = str(self.password_entry.get())
+
+        # Regex para validar o e-mail
+        email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+
+        # Regex para validar a senha
+        password_regex = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$'
+        
         confirm_password = self.confirm_password_entry.get()
-
-        if not email or not username or not password or not confirm_password:
-            util.msg_box('Erro!', 'Por favor, preencha todos os campos.')
-            return
-
-        if password != confirm_password:
-            util.msg_box('Erro!', 'As senhas não coincidem.')
-            return
-
-        if not self.register_checkbox.get():
+        if not email.strip() or not user.strip() or not password.strip() or not confirm_password.strip():
+            messagebox.showerror("Erro", "Todos os campos devem ser preenchidos")
+        elif not re.match(email_regex, email):
+            messagebox.showerror("Erro", "E-mail inválido")
+        elif not re.match(password_regex, password):
+            messagebox.showerror("Erro", "A senha deve ter no mínimo 8 caracteres, incluindo pelo menos um número, uma letra e um caractere especial")
+        elif password != confirm_password:
+            messagebox.showerror("Erro", "As senhas devem ser iguais")
+        elif not self.register_checkbox.get():
             messagebox.showerror("Erro", "Você deve aceitar os termos e políticas")
-            return
-
-        # Se todas as validações estiverem corretas, abrir a tela de captura
-        self.open_webcam_capture()
+        elif new_user.get_user_info_based_on_email(email):
+            messagebox.showerror("Erro", "Email já cadastrado!")
+        else:
+            messagebox.showinfo("Sucesso", "Usuario cadastrado com sucesso")
+            
+            user_password = new_user.generate_password(password)
+            user_image_name = new_user.save_bd_new_user_and_return_id_of_user(user, email, user_password)
+            print("Imagem pode ser salva com o nome:",user_image_name)
+            
+            # Se todas as validações estiverem corretas, abrir a tela de captura
+            self.open_webcam_capture()
 
     def add_img_to_label(self, label):
         if self.most_recent_capture_pil:
