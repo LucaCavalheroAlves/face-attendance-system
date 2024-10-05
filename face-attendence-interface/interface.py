@@ -6,7 +6,7 @@ import customtkinter as ctk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 import util
-#import face_recognition
+import face_recognition
 import model
 
 class Application:
@@ -158,17 +158,26 @@ class Application:
         self.tela_login()
 
     def validate_login(self):
-        email = self.user_entry.get()
-        password = self.password_entry.get()
+        global user
+        user = model.userDAO()
+        email = str(self.user_entry.get())
+        password = str(self.password_entry.get())
 
-        if not email or not password:
-            util.msg_box('Erro!', 'Por favor, preencha todos os campos.')
-            return
+        # Regex para validar o e-mail
+        email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 
-        # Verifique aqui se o login é válido (exemplo, verificando no banco de dados)
-
-        # Se o login for bem-sucedido
-        util.msg_box('Sucesso!', 'Login realizado com sucesso!')
+        user_data = user.get_user_info_based_on_email(email) # Dados do usuário recebido pelo BD
+        
+        if not email.strip() or not password.strip():
+            messagebox.showerror("Erro", "Todos os campos devem ser preenchidos")
+        elif not re.match(email_regex, email):
+            messagebox.showerror("Erro", "E-mail inválido")
+        elif not user_data:
+            messagebox.showerror("Erro", "Não há cadastro com esse email")
+        elif not user.check_password(password, user_data[5]):
+            messagebox.showerror("Erro", "Senha incorreta!")
+        else:
+            util.msg_box('Sucesso!', 'Login realizado com sucesso!')
 
     def validate_register(self):
         new_user = model.userDAO()
