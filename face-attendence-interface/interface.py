@@ -66,7 +66,7 @@ class Application:
         self.janela.resizable(False, False)
 
         # Carregar a imagem PNG e definir como ícone
-        icon_image = Image.open("./Biometria-University-interface-add/icons/LogoIcon.png")
+        icon_image = Image.open("/home/lcavalhero/projects/biometria/face-attendance-system/face-attendence-interface/icons/LogoIcon.png")
         icon_photo = ImageTk.PhotoImage(icon_image)
         self.janela.iconphoto(True, icon_photo)
 

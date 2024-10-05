@@ -1,20 +1,14 @@
 import os
 import pickle
-
+import customtkinter as ctk
 import tkinter as tk
 from tkinter import messagebox
 import face_recognition
 
-
-
-def get_img_label(window):
-    label = tk.Label(window)
-    label.grid(row=0, column=0)
+def get_img_label(master):
+    label = ctk.CTkLabel(master=master)  # Não defina texto aqui
+    label.pack()  # Use pack ou grid conforme necessário
     return label
-
-
-
-
 
 def msg_box(title, description):
     messagebox.showinfo(title, description)
