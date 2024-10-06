@@ -11,7 +11,7 @@ class userDAO:
 
     def check_password(self, provided_password, stored_hash):
         # Verifica se a senha fornecida corresponde ao hash armazenado
-        return bcrypt.checkpw(provided_password.encode('utf-8'), stored_hash) # return true or false
+        return bcrypt.checkpw(provided_password.encode('utf-8'), stored_hash.encode('utf-8')) # return true or false
 
     def save_bd_new_user_and_return_id_of_user(self, name, email, password):
         sql = "INSERT INTO users (user_name, email, password) VALUES (%s, %s, %s)"
