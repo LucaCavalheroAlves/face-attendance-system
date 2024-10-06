@@ -38,7 +38,7 @@ class Application():
         # Configurar a geometria da janela e centralizar
         self.janela.geometry(f"{largura_janela}x{altura_janela}+{pos_x}+{pos_y}")
         janela.title("Sistema de Login")
-        janela.iconbitmap("./icons/LogoIcon.ico")
+        
         janela.resizable(False, False)
 
     def tela_login(self):
