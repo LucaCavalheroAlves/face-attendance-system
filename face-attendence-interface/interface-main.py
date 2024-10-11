@@ -10,6 +10,7 @@ import face_recognition
 import model
 import numpy as np
 
+
 class Application:
     def __init__(self):
         self.janela = ctk.CTk()
@@ -159,7 +160,7 @@ class Application:
         self.tela_login()
 
     def validate_login(self):
-        global user
+        global user_data
         user = model.userDAO()
         email = str(self.user_entry.get())
         password = str(self.password_entry.get())
@@ -178,7 +179,45 @@ class Application:
         elif not user.check_password(password, user_data[5]):
             messagebox.showerror("Erro", "Senha incorreta!")
         else:
-            util.msg_box('Sucesso!', 'Login realizado com sucesso!')
+            # Continue to login recognition
+            self.open_webcam_capture_login()
+            
+    def open_webcam_capture_login(self):
+        # Criar uma nova janela para a captura da webcam
+        self.capture_window = ctk.CTkToplevel(self.janela)
+        self.capture_window.title("Captura de Webcam")
+        self.capture_window.geometry("700x600")
+
+        # Criar um frame para a captura
+        self.capture_frame = ctk.CTkFrame(master=self.capture_window, width=700, height=600)
+        self.capture_frame.pack()
+
+        # Adicionar o label da webcam
+        self.capture_label = util.get_img_label(self.capture_frame)
+        self.capture_label.pack()  # Use pack aqui
+
+        self.add_img_to_label(self.capture_label)
+
+        # Botões para aceitar e cancelar
+        self.accept_button = ctk.CTkButton(master=self.capture_window, text="Login", command=self.login_recognition)
+        self.accept_button.pack(pady=(10, 5))  # Use pack aqui
+
+        self.cancel_button = ctk.CTkButton(master=self.capture_window, text="Cancelar", command=self.cancel_capture)
+        self.cancel_button.pack(pady=(5, 10))  # Use pack aqui
+        
+    def login_recognition(self):
+        face_image = np.array(self.most_recent_capture_pil)
+        
+        
+        name = util.recognize(face_image, self.db_dir)
+        if name in ['unknown_person', 'no_persons_found']:
+            
+            util.msg_box('Ups...', 'Unknown user. Please register new user or try again.')
+            return
+        
+        util.msg_box('Welcome back !', 'Welcome, {}.'.format(user_data[1]))
+        
+
 
     def validate_register(self):
         global new_user,email,user,user_password
@@ -208,11 +247,7 @@ class Application:
             messagebox.showerror("Erro", "Email já cadastrado!")
         else:
             
-            
             user_password = new_user.generate_password(password)
-            user_image_name = new_user.save_bd_new_user_and_return_id_of_user(user, email, user_password)
-            print("Imagem pode ser salva com o nome:",user_image_name)
-            
             # Se todas as validações estiverem corretas, abrir a tela de captura
             self.open_webcam_capture()
 
@@ -245,8 +280,6 @@ class Application:
         self.cancel_button = ctk.CTkButton(master=self.capture_window, text="Cancelar", command=self.cancel_capture)
         self.cancel_button.pack(pady=(5, 10))  # Use pack aqui
 
-        
-
     def register_new_user_face(self):
         # Converte a imagem PIL mais recente em numpy.ndarray
         face_image = np.array(self.most_recent_capture_pil)
@@ -275,28 +308,15 @@ class Application:
             return
 
         # Salva a nova codificação facial
-        user_image_name = new_user.save_bd_new_user_and_return_id_of_user(user, email, user_password)  # Obter nome do usuário a partir do campo
+        user_image_name = new_user.save_bd_new_user_and_return_id_of_user(user, email,user_password)
         with open(os.path.join(self.db_dir, f'{user_image_name}.pickle'), 'wb') as file:
             pickle.dump(new_user_encoding, file)
 
         messagebox.showinfo("Sucesso", "Usuario cadastrado com sucesso")
         self.capture_window.destroy()  # Fechar a janela de captura
-
-
-    def cancel_capture(self):
-        # Limpar a captura e liberar a câmera
-        if 'cap' in self.__dict__:
-            self.cap.release()
-            
         
-        # Destruir a janela de captura
-        if hasattr(self, 'capture_window'):
-            self.capture_window.destroy()  # Destruir a janela de captura
+    def cancel_capture(self):
+        self.capture_window.destroy()  # Destruir a janela de captura
     
-        # Chamar a tela de registro
-        self.tela_register()  # Voltar à tela de cadastro
-
-
-
 if __name__ == "__main__":
     app = Application()
