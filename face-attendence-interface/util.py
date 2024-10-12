@@ -7,15 +7,14 @@ import face_recognition
 
 def get_img_label(master):
     label = ctk.CTkLabel(master=master)  # Não defina texto aqui
-    label.pack()  # Use pack ou grid conforme necessário
+    label.pack()  
     return label
 
 def msg_box(title, description):
     messagebox.showinfo(title, description)
 
-
+#proccura dentro do banco, algum match de face_encodings baseado na imagem recebida como parametro
 def recognize(img, db_path):
-    # it is assumed there will be at most 1 match in the db
 
     embeddings_unknown = face_recognition.face_encodings(img)
     if len(embeddings_unknown) == 0:
