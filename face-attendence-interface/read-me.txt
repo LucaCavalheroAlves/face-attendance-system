@@ -1,0 +1,11 @@
+O código foi desenvolvido utilizando o sistema operacional Debian GNU/Linux (versão 11), é recomendado que seja utilizado linux para testar o programa devido a algumas dependências.
+Além disso, foram utilizadas várias bibliotecas para auxiliar no andamento do projeto então é recomendado que todas estejam baixadas e atualizadas.
+
+Principais pacotes e bibliotecas utilizadas:
+-openCV
+-Dlib
+-tkinter e customtkinter
+-PILLOW
+-face_recognition
+-pickle
+-mysql
