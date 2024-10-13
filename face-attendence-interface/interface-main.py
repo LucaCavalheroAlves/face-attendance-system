@@ -232,10 +232,10 @@ class Application:
         name = util.recognize(face_image, self.db_dir)
         if name in ['unknown_person', 'no_persons_found']:
             
-            util.msg_box('Ups...', 'Unknown user. Please register new user or try again.')
+            util.msg_box('Ups...', 'Usuário não reconhecido ou encontrado, cadastre ou tente novamente!')
             return
-        
-        util.msg_box('Welcome back !', 'Welcome, {}.'.format(user_data[1]))
+            
+        util.msg_box('Bem-vindo !', 'Olá, {}.'.format(user_data[1]))
         
 
     #valida os dados para prosseguir para o registro de novo usuário
