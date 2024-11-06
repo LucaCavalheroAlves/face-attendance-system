@@ -9,17 +9,12 @@ class userDAO:
         hashed = bcrypt.hashpw(password.encode('utf-8'), salt)  # Codifica a senha para bytes e aplica o hash
         return hashed # return hash_password
 
-    #check_password(self, provided_password, stored_hash):
-    #   import bcrypt
-
     def check_password(self,provided_password, stored_hash):
         # Se o hash estiver em formato string, converta-o para bytes
         if isinstance(stored_hash, str):
             stored_hash = stored_hash.encode('utf-8')
         
-        
         return bcrypt.checkpw(provided_password.encode('utf-8'), stored_hash)
-
 
     def save_bd_new_user_and_return_id_of_user(self, name, email, password):
         sql = "INSERT INTO users (user_name, email, password) VALUES (%s, %s, %s)"

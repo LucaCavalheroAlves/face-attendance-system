@@ -226,17 +226,25 @@ class Application:
         
     #realiza o reconhecimento facial para login
     def login_recognition(self):
+        # Converte a imagem capturada da webcam em array para o reconhecimento
         face_image = np.array(self.most_recent_capture_pil)
         
-        
+        # Chama a função de reconhecimento facial
         name = util.recognize(face_image, self.db_dir)
-        if name in ['unknown_person', 'no_persons_found']:
-            
-            util.msg_box('Ups...', 'Usuário não reconhecido ou encontrado, cadastre ou tente novamente!')
-            return
-            
-        util.msg_box('Bem-vindo !', 'Olá, {}.'.format(user_data[1]))
         
+        # Tratamento de retorno para casos específicos
+        if name == 'no_persons_found':
+            util.msg_box('Ops...', 'Nenhum rosto detectado na imagem. Tente novamente!')
+            return
+        elif name == 'unknown_person':
+            util.msg_box('Ops...', 'Usuário não reconhecido. Cadastre-se ou tente novamente!')
+            return
+        if (user_data[6]=='usuário'):
+        # Se o nome for reconhecido, exibe a mensagem de boas-vindas
+            util.msg_box('Bem-vindo!', f'Olá, {user_data[1]}!')
+        else:
+            util.msg_box('Bem-vindo!', f'Olá, {user_data[1]}, ({user_data[6]})!')
+
 
     #valida os dados para prosseguir para o registro de novo usuário
     def validate_register(self):
